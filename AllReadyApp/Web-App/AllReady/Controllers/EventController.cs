@@ -1,11 +1,10 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AllReady.Features.Events;
 using AllReady.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace AllReady.Controllers
 {
@@ -57,8 +56,6 @@ namespace AllReady.Controllers
             {
                 return NotFound();
             }
-
-            ViewBag.AbsoluteUrl = System.Net.WebUtility.UrlEncode(Url.Action(new UrlActionContext { Action = nameof(ShowEvent), Controller = "Event", Values = null, Protocol = Request.Scheme }));
 
             return View("EventWithTasks", viewModel);
         }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 using AllReady.Areas.Admin.Features.Tasks;
@@ -39,16 +39,14 @@ namespace AllReady.UnitTest.Areas.Admin.Features.Tasks
         {
             var result = await sut.Handle(message);
 
-            Assert.Equal(@event.Id, result.EventId);
-            Assert.Equal(@event.Name, result.EventName);
-            Assert.Equal(@event.StartDateTime, result.EventStartDate);
-            Assert.Equal(@event.EndDateTime, result.EventEndDate);
-            Assert.Equal(@event.StartDateTime, result.StartDateTime);
-            Assert.Equal(@event.EndDateTime, result.EndDateTime);           
-            Assert.Equal(@event.CampaignId, result.CampaignId);
-            Assert.Equal(@event.Campaign.Name, result.CampaignName);
-            Assert.Equal(@event.Campaign.ManagingOrganizationId, result.OrganizationId);
-            Assert.Equal(@event.TimeZoneId, result.TimeZoneId);
+            Assert.Equal(result.EventId, @event.Id);
+            Assert.Equal(result.EventName, @event.Name);
+            Assert.Equal(result.StartDateTime, @event.StartDateTime);
+            Assert.Equal(result.EndDateTime, @event.EndDateTime);
+            Assert.Equal(result.CampaignId, @event.CampaignId);
+            Assert.Equal(result.CampaignName, @event.Campaign.Name);
+            Assert.Equal(result.OrganizationId, @event.Campaign.ManagingOrganizationId);
+            Assert.Equal(result.TimeZoneId, @event.TimeZoneId);
         }
 
         [Fact]

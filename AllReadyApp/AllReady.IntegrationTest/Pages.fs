@@ -93,9 +93,6 @@ module AdminCampaignDetails =
         click createNew
 
 module AdminOrganizationCreate =
-    let privicyPolicyFieldVisible () =
-        (elements "#pp-url").Length = 1
-
     type OrganizationDetails = {
         Name:string
         WebUrl:string
@@ -128,8 +125,6 @@ module AdminOrganizationCreate =
         "#Location_State" << details.State
         "#Location_PostalCode" << details.PostalCode.ToString()
         "#Location_Country" << details.Country
-        click "Link to an external policy"
-        waitFor privicyPolicyFieldVisible
         "#PrivacyPolicyUrl" << details.PrivacyPolicyUrl
 
     let Save _ =

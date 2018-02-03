@@ -3,6 +3,8 @@
   <PropertyGroup>
     <Description>AllReady</Description>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <DebugType>full</DebugType>
+	<DebugSymbols>True</DebugSymbols>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>AllReady</AssemblyName>
     <OutputType>Exe</OutputType>
@@ -23,22 +25,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
-    <PackageReference Include="MediatR" Version="2.1.0" />
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.0.0" />
-    <PackageReference Include="Autofac" Version="4.2.1" />
-    <PackageReference Include="CsvHelper" Version="2.16.3" />
-    <PackageReference Include="Hangfire" Version="1.6.8" />
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.6.8" />
-    <PackageReference Include="Hangfire.Core" Version="1.6.8" />
-    <PackageReference Include="Hangfire.SqlServer" Version="1.6.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" PrivateAssets="All" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="Polly" Version="5.0.3" />
-    <PackageReference Include="Twilio" Version="5.6.1" />
-    <PackageReference Include="WindowsAzure.Storage" Version="8.3.0" />
-    <PackageReference Include="TimeZoneConverter" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="[2.0.5]" />
+    <PackageReference Include="MediatR" Version="[2.1.0]" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="[4.2.0]" />
+    <PackageReference Include="Autofac" Version="[4.6.2]" />
+    <PackageReference Include="CsvHelper" Version="[2.16.3]" />
+    <PackageReference Include="Hangfire" Version="[1.6.17]" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="[1.6.17]" />
+    <PackageReference Include="Hangfire.Core" Version="[1.6.17]" />
+    <PackageReference Include="Hangfire.SqlServer" Version="[1.6.17]" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="[2.0.1]" PrivateAssets="All]" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="[2.0.2]" PrivateAssets="All]" />
+    <PackageReference Include="Newtonsoft.Json" Version="[11.0.1-beta3]" />
+    <PackageReference Include="Polly" Version="[5.7.0]" />
+    <PackageReference Include="Twilio" Version="[5.6.1]" />
+    <PackageReference Include="WindowsAzure.Storage" Version="[8.7.0]" />
+    <PackageReference Include="TimeZoneConverter" Version="[2.2.1]" />
   </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">

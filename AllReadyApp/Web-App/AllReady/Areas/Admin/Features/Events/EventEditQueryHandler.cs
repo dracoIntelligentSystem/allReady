@@ -1,8 +1,8 @@
-using AllReady.Areas.Admin.ViewModels.Event;
-using AllReady.Models;
+﻿using AllReady.Models;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using AllReady.Areas.Admin.ViewModels.Event;
+using Microsoft.EntityFrameworkCore;
 
 namespace AllReady.Areas.Admin.Features.Events
 {
@@ -29,8 +29,6 @@ namespace AllReady.Areas.Admin.Features.Events
                     EventType = campaignEvent.EventType,
                     CampaignName = campaignEvent.Campaign.Name,
                     CampaignId = campaignEvent.Campaign.Id,
-                    CampaignStartDateTime = campaignEvent.Campaign.StartDateTime,
-                    CampaignEndDateTime = campaignEvent.Campaign.EndDateTime,
                     OrganizationId = campaignEvent.Campaign.ManagingOrganizationId,
                     OrganizationName = campaignEvent.Campaign.ManagingOrganization.Name,
                     Name = campaignEvent.Name,

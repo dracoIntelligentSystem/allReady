@@ -49,7 +49,6 @@ namespace AllReady.Configuration
             services.AddSingleton<IHttpClient, StaticHttpClient>();
             services.AddTransient<IBlockBlob, BlockBlob>();
             services.AddTransient<IAttachmentService, AttachmentService>();
-            services.AddSingleton<IImageSizeValidator, ImageSizeValidator>();
 
             if (configuration["Mapping:EnableGoogleGeocodingService"] == "true")
             {

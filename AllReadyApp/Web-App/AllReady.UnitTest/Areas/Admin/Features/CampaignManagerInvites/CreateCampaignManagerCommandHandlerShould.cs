@@ -10,7 +10,7 @@ using Xunit;
 
 namespace AllReady.UnitTest.Areas.Admin.Features.CampaignManagerInvites
 {
-    class CreateCampaignManagerCommandHandlerShould : InMemoryContextTest
+    public class CreateCampaignManagerCommandHandlerShould : InMemoryContextTest
     {
         private string _userId = Guid.NewGuid().ToString();
         private int _campaignId = 10;

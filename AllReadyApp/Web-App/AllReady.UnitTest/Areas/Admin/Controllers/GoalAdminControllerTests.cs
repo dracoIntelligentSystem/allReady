@@ -15,7 +15,7 @@ using ClaimTypes = AllReady.Security.ClaimTypes;
 
 namespace AllReady.UnitTest.Areas.Admin.Controllers
 {
-    public class GoalAdminControllerTests
+    public class GoalControllerTests
     {
         private const int OrgAdminOrgId = 123;
 

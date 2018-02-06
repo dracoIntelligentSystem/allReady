@@ -25,7 +25,7 @@ using DeleteViewModel = AllReady.Areas.Admin.Features.Events.DeleteViewModel;
 
 namespace AllReady.UnitTest.Areas.Admin.Controllers
 {
-    public class EventAdminControllerTests
+    public class EventControllerTests
     {
         private static readonly Task TaskCompletedTask = Task.CompletedTask;
 

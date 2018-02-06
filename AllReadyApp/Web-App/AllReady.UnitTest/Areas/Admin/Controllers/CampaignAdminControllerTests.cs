@@ -20,7 +20,7 @@ using Xunit;
 
 namespace AllReady.UnitTest.Areas.Admin.Controllers
 {
-    public class CampaignAdminControllerTests
+    public class CampaignControllerTests
     {
         [Fact]
         public async Task IndexSendsIndexQueryWithCorrectData_WhenUserIsOrgAdmin()

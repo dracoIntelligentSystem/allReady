@@ -35,7 +35,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var mediator = new Mock<IMediator>();
             mediator.Setup(x => x.SendAsync(It.IsAny<IndexQuery>())).ReturnsAsync(viewModel);
 
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
             var result = await controller.Index() as ViewResult;
             var model = result.ViewData.Model as IndexViewModel;
             
@@ -50,7 +50,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             
             const string userId = "foo_id";
             mediator.Setup(x => x.SendAsync(It.Is<UserQuery>(q => q.UserId == userId))).ReturnsAsync(new EditUserViewModel());
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
 
             await controller.DeleteUser(userId);
             mediator.Verify(m =>m.SendAsync(It.Is<UserQuery>(q =>q.UserId == userId)), Times.Once);
@@ -62,7 +62,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var mediator = new Mock<IMediator>();
             const string userId = "foo_id";
             mediator.Setup(x => x.SendAsync(It.IsAny<UserQuery>())).ReturnsAsync(new EditUserViewModel());
-            var controller = new SiteController(null, null, mediator.Object);            
+            var controller = new SiteAdminController(null, null, mediator.Object);            
 
             var result = await controller.DeleteUser(userId);
             var model = ((ViewResult)result).ViewData.Model as DeleteUserViewModel;
@@ -74,7 +74,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         [Fact]
         public void DeleteUserHasHttpGetAttribute()
         {
-            var controller = new SiteController(null, null, null);
+            var controller = new SiteAdminController(null, null, null);
             var attribute = controller.GetAttributesOn(x => x.DeleteUser(It.IsAny<string>())).OfType<HttpGetAttribute>().SingleOrDefault();
             Assert.NotNull(attribute);
         }
@@ -85,7 +85,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             const string userId = "userId";
             var userManager = CreateApplicationUserMock();
 
-            var controller = new SiteController(userManager.Object, null, null);
+            var controller = new SiteAdminController(userManager.Object, null, null);
             
             await controller.ConfirmDeleteUser(userId);
             userManager.Verify(x => x.FindByIdAsync(userId), Times.Once);
@@ -96,17 +96,17 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         {
             var applicationUser = CreateApplicationUserMock();
 
-            var controller = new SiteController(applicationUser.Object, null, null);
+            var controller = new SiteAdminController(applicationUser.Object, null, null);
 
             var result = await controller.ConfirmDeleteUser(It.IsAny<string>()) as RedirectToActionResult;
 
-            Assert.Equal(nameof(SiteController.Index), result.ActionName);
+            Assert.Equal(nameof(SiteAdminController.Index), result.ActionName);
         }
 
         [Fact]
         public void ConfirmDeletUserHasHttpPostAttribute()
         {
-            var controller = new SiteController(null, null, null);
+            var controller = new SiteAdminController(null, null, null);
             var attribute = controller.GetAttributesOn(x => x.ConfirmDeleteUser(It.IsAny<string>())).OfType<HttpPostAttribute>().SingleOrDefault();
             Assert.NotNull(attribute);
         }
@@ -114,7 +114,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         [Fact]
         public void ConfirmDeletUserHasValidateAntiForgeryTokenAttribute()
         {            
-            var controller = new SiteController(null, null, null);
+            var controller = new SiteAdminController(null, null, null);
             var attribute = controller.GetAttributesOn(x => x.ConfirmDeleteUser(It.IsAny<string>())).OfType<ValidateAntiForgeryTokenAttribute>().SingleOrDefault();
 
             Assert.NotNull(attribute);
@@ -124,12 +124,12 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task EditUserGetSendsUserByUserIdQueryWithCorrectUserId()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
 
             var userId = It.IsAny<string>();
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId)))
                 .ReturnsAsync(new ApplicationUser());
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
 
             await controller.EditUser(userId);
             mediator.Verify(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId)), Times.Once);
@@ -144,7 +144,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
                 var userId = It.IsAny<string>();
                 mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId)))
                     .ReturnsAsync(new ApplicationUser());
-                var controller = new SiteController(null, null, mediator.Object);
+                var controller = new SiteAdminController(null, null, mediator.Object);
 
                 var result = controller.EditUser(userId);
                 var model = ((ViewResult)await result).ViewData.Model as EditUserViewModel;
@@ -176,7 +176,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.Send(It.Is<OrganizationByIdQuery>(q => q.OrganizationId == orgId)))
                .Returns(org);
 
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
 
             var result = controller.EditUser(userId);
             var model = ((ViewResult)await result).ViewData.Model as EditUserViewModel;
@@ -192,7 +192,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             {
                 UserId = "1234",
             };
-            var controller = new SiteController(null, null, null);
+            var controller = new SiteAdminController(null, null, null);
             controller.ModelState.AddModelError("FakeKey", "FakeMessage");
             var result = (ViewResult)await controller.EditUser(model);
             Assert.Equal(result.Model, model);
@@ -208,7 +208,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             };
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == model.UserId)))
                 .ReturnsAsync(new ApplicationUser());
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
 
             await controller.EditUser(model);
             mediator.Verify(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == model.UserId)), Times.Once);
@@ -225,7 +225,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             };
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == model.UserId)))
                 .ReturnsAsync(new ApplicationUser());
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
 
             await controller.EditUser(model);
             mediator.Verify(m => m.SendAsync(It.Is<UpdateUser>(q => q.User.AssociatedSkills[0].Skill == model.AssociatedSkills[0].Skill)), Times.Once);
@@ -248,7 +248,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == model.UserId)))
                 .ReturnsAsync(user);
 
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
 
             await controller.EditUser(model);
             mediator.Verify(m => m.SendAsync(It.Is<UpdateUser>(q => q.User.AssociatedSkills[0] == model.AssociatedSkills[0])), Times.Once);
@@ -276,7 +276,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == model.UserId))).ReturnsAsync(user);
             userManager.Setup(x => x.AddClaimAsync(It.IsAny<ApplicationUser>(), It.IsAny<Claim>())).ReturnsAsync(IdentityResult.Success);
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             controller.SetDefaultHttpContext();
             controller.Url = GetMockUrlHelper("any");
             await controller.EditUser(model);
@@ -305,7 +305,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == model.UserId))).ReturnsAsync(user);
             userManager.Setup(x => x.AddClaimAsync(It.IsAny<ApplicationUser>(), It.IsAny<Claim>())).ReturnsAsync(IdentityResult.Success);
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             controller.SetFakeHttpRequestSchemeTo(requestScheme);
             var urlHelper = new Mock<IUrlHelper>();
             controller.Url = urlHelper.Object;
@@ -338,7 +338,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == model.UserId))).ReturnsAsync(user);
             userManager.Setup(x => x.AddClaimAsync(It.IsAny<ApplicationUser>(), It.IsAny<Claim>())).ReturnsAsync(IdentityResult.Success);
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             controller.SetDefaultHttpContext();
             var expectedUrl = $"Login/Admin?Email={user.Email}";
             controller.Url = GetMockUrlHelper(expectedUrl);
@@ -369,7 +369,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var userManager = CreateApplicationUserMock();
             userManager.Setup(x => x.AddClaimAsync(It.IsAny<ApplicationUser>(), It.IsAny<Claim>())).ReturnsAsync(IdentityResult.Failed(null));
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             var result = await controller.EditUser(model);
 
             Assert.IsType<RedirectResult>(result);
@@ -390,7 +390,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var userManager = CreateApplicationUserMock();
             userManager.Setup(x => x.RemoveClaimAsync(It.IsAny<ApplicationUser>(), It.IsAny<Claim>())).ReturnsAsync(IdentityResult.Success);
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             await controller.EditUser(model);
 
             userManager.Verify(x => x.RemoveClaimAsync(user, It.Is<Claim>(c => c.Value == nameof(UserType.OrgAdmin))), Times.Once);
@@ -410,7 +410,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var userManager = CreateApplicationUserMock();
             userManager.Setup(x => x.RemoveClaimAsync(It.IsAny<ApplicationUser>(), It.IsAny<Claim>())).ReturnsAsync(IdentityResult.Failed(null));
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             var result = await controller.EditUser(model);
 
             Assert.IsType<RedirectResult>(result);
@@ -425,7 +425,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var userId = It.IsAny<string>();
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId)))
                 .ReturnsAsync(new ApplicationUser());
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
 
             var result = await controller.EditUser(new EditUserViewModel());
 
@@ -436,7 +436,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         [Fact]
         public void EditUserPostHasHttpPostAttribute()
         {
-            var controller = new SiteController(null, null, null);
+            var controller = new SiteAdminController(null, null, null);
             var attribute = controller.GetAttributesOn(x => x.EditUser(It.IsAny<EditUserViewModel>())).OfType<HttpPostAttribute>().SingleOrDefault();
             Assert.NotNull(attribute);
         }
@@ -444,7 +444,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         [Fact]
         public void EditUserPostHasValidateAntiForgeryTokenAttribute()
         {
-            var controller = new SiteController(null, null, null);
+            var controller = new SiteAdminController(null, null, null);
             var attribute = controller.GetAttributesOn(x => x.EditUser(It.IsAny<EditUserViewModel>())).OfType<ValidateAntiForgeryTokenAttribute>().SingleOrDefault();
             Assert.NotNull(attribute);
         }
@@ -453,11 +453,11 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task ResetPasswordSendsUserByUserIdQueryWithCorrectUserId()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
 
             var userId = It.IsAny<string>();
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).ReturnsAsync(new ApplicationUser());
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
 
             await controller.ResetPassword(userId);
             mediator.Verify(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId)), Times.Once);
@@ -470,7 +470,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var userId = "1234";
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).ReturnsAsync((ApplicationUser)null); 
 
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
             await controller.ResetPassword(userId);
             Assert.Equal("User not found.", controller.ViewBag.ErrorMessage);
         }
@@ -489,7 +489,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == user.Id)))
                 .ReturnsAsync(user);
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             controller.SetDefaultHttpContext();
             controller.Url = GetMockUrlHelper("any");
             await controller.ResetPassword(user.Id);
@@ -513,7 +513,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
                 .ReturnsAsync(user);
             var code = "passcode";
             userManager.Setup(u => u.GeneratePasswordResetTokenAsync(user)).ReturnsAsync(code);
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             var urlHelper = new Mock<IUrlHelper>();
             controller.Url = urlHelper.Object;
             controller.SetFakeHttpRequestSchemeTo(requestScheme);
@@ -542,7 +542,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var code = "passcode";
             userManager.Setup(u => u.GeneratePasswordResetTokenAsync(user)).ReturnsAsync(code);
             var url = $"Admin/ResetPassword?userId={user.Id}&code={code}";
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             controller.SetDefaultHttpContext();
             controller.Url = GetMockUrlHelper(url);
             await controller.ResetPassword(user.Id);
@@ -567,7 +567,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var code = "passcode";
             userManager.Setup(u => u.GeneratePasswordResetTokenAsync(user)).ReturnsAsync(code);
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             controller.SetDefaultHttpContext();
             controller.Url = GetMockUrlHelper("any");
             await controller.ResetPassword(user.Id);
@@ -591,7 +591,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var code = "passcode";
             userManager.Setup(u => u.GeneratePasswordResetTokenAsync(user)).ReturnsAsync(code);
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             controller.SetDefaultHttpContext();
             controller.Url = GetMockUrlHelper("any");
             var result = (ViewResult)await controller.ResetPassword(user.Id);
@@ -603,11 +603,11 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task ResetPasswordInvokesLogErrorWhenExceptionIsThrown()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             mediator.Setup(x => x.SendAsync(It.IsAny<UserByUserIdQuery>()))
                 .Throws<Exception>();
 
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
             await controller.ResetPassword("1234");
 
             logger.Verify(l => l.Log<object>(LogLevel.Error, 0,
@@ -619,11 +619,11 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task ResetPasswordAddsCorrectErrorMessagetoViewBagWhenExceptionIsThrown()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             mediator.Setup(x => x.SendAsync(It.IsAny<UserByUserIdQuery>()))
                 .Throws<Exception>();
 
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
             var userId = "1234";
             await controller.ResetPassword(userId);
 
@@ -634,11 +634,11 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task ResetPasswordReturnsAViewWhenExcpetionIsThrown()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             mediator.Setup(x => x.SendAsync(It.IsAny<UserByUserIdQuery>()))
                 .Throws<Exception>();
 
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
             var userId = "1234";
             var result = (ViewResult)await controller.ResetPassword(userId);
             Assert.IsType<ViewResult>(result);
@@ -647,7 +647,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         [Fact]
         public void ResetPasswordHasHttpGetAttribute()
         {
-            var controller = new SiteController(null, null,null);
+            var controller = new SiteAdminController(null, null,null);
             var attribute = controller.GetAttributesOn(x => x.ResetPassword(It.IsAny<string>())).OfType<HttpGetAttribute>().SingleOrDefault();
             Assert.NotNull(attribute);
         }
@@ -656,11 +656,11 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task AssignSiteAdminSendsUserByUserIdQueryWithCorrectUserId()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
 
             var userId = It.IsAny<string>();
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).ReturnsAsync(new ApplicationUser());
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
 
             await controller.AssignSiteAdmin(userId);
             mediator.Verify(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId)), Times.Once);
@@ -670,11 +670,11 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task AssignApiRoleQueriesForCorrectId()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
 
             var userId = Guid.NewGuid().ToString();
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).ReturnsAsync(new ApplicationUser());
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
 
             await controller.AssignApiAccessRole(userId);
             mediator.Verify(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId)), Times.Once);
@@ -684,11 +684,11 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task SearchForCorrectUserWhenManagingApiKeys()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
 
             var userId = Guid.NewGuid().ToString();
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).ReturnsAsync(new ApplicationUser());
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
 
             await controller.ManageApiKeys(userId);
             mediator.Verify(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId)), Times.Once);
@@ -698,11 +698,11 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task SearchForCorrectUserWhenGeneratingApiKeys()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
 
             var userId = Guid.NewGuid().ToString();
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).ReturnsAsync(new ApplicationUser());
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
 
             await controller.GenerateToken(userId);
             mediator.Verify(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId)), Times.Once);
@@ -718,7 +718,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == user.Id)))
                 .ReturnsAsync(user);
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             await controller.AssignSiteAdmin(user.Id);
 
             userManager.Verify(x => x.AddClaimAsync(user, It.Is<Claim>(c => 
@@ -739,7 +739,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == user.Id))).ReturnsAsync(user);
             userManager.Setup(x => x.AddClaimAsync(It.IsAny<ApplicationUser>(), It.IsAny<Claim>())).ReturnsAsync(IdentityResult.Success);
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             var result = (RedirectToActionResult) await controller.AssignSiteAdmin(user.Id);
             Assert.Equal("Index", result.ActionName);
         }
@@ -748,7 +748,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task AssignSiteAdminInvokesLogErrorWhenExceptionIsThrown()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             var user = new ApplicationUser
             {
                 Id = "1234"
@@ -757,7 +757,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == user.Id)))
                 .Throws<Exception>();
 
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
             await controller.AssignSiteAdmin(user.Id);
 
             logger.Verify(l => l.Log<object>(LogLevel.Error, 0,
@@ -769,7 +769,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task AssignSiteAdminAddsCorrectErrorMessageToViewBagWhenExceptionIsThrown()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             var userManager = CreateApplicationUserMock();
             var user = new ApplicationUser
             {
@@ -779,7 +779,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == user.Id)))
                 .Throws<Exception>();
 
-            var controller = new SiteController(userManager.Object, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, logger.Object, mediator.Object);
             await controller.AssignSiteAdmin(user.Id);
 
             Assert.Equal($"Failed to assign site admin for {user.Id}. Exception thrown.", controller.ViewBag.ErrorMessage);
@@ -789,7 +789,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task AssignSiteAdminReturnsAViewWhenExceptionIsThrown()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             var userManager = CreateApplicationUserMock();
             var user = new ApplicationUser
             {
@@ -799,7 +799,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == user.Id)))
                 .Throws<Exception>();
 
-            var controller = new SiteController(userManager.Object, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, logger.Object, mediator.Object);
             var result = await controller.AssignSiteAdmin(user.Id);
             Assert.IsType<ViewResult>(result);
         }
@@ -807,7 +807,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         [Fact]
         public void AssignSiteAdminHasHttpGetAttribute()
         {
-            var controller = new SiteController(null, null, null);
+            var controller = new SiteAdminController(null, null, null);
             var attribute = controller.GetAttributesOn(x => x.AssignSiteAdmin(It.IsAny<string>())).OfType<HttpGetAttribute>().SingleOrDefault();
             Assert.NotNull(attribute);
         }
@@ -817,7 +817,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         {
             var mediator = new Mock<IMediator>();
             var userId = "1234";
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
             await controller.AssignOrganizationAdmin(userId);
             mediator.Verify(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId)), Times.Once);
         }
@@ -832,7 +832,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == user.Id)))
                 .ReturnsAsync(user);
 
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
             var result = (RedirectToActionResult) await controller.AssignOrganizationAdmin(user.Id);
             Assert.Equal("Index", result.ActionName);
         }
@@ -854,7 +854,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == user.Id)))
                 .ReturnsAsync(user);
 
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
             var result = (RedirectToActionResult) await controller.AssignOrganizationAdmin(user.Id);
             Assert.Equal("Index", result.ActionName);
         }
@@ -870,7 +870,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == user.Id)))
                 .ReturnsAsync(user);
 
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
             await controller.AssignOrganizationAdmin(user.Id);
             mediator.Verify(m => m.SendAsync(It.IsAny<AllOrganizationsQuery>()), Times.Once);
         }
@@ -891,7 +891,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
                 new Organization { Id = 1, Name = "Aorg" }
             };
             mediator.Setup(x => x.SendAsync(It.IsAny<AllOrganizationsQuery>())).ReturnsAsync(orgs);
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
             await controller.AssignOrganizationAdmin(user.Id);
 
             var viewBagOrgs = ((IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)controller.ViewBag.Organizations).ToList();
@@ -918,7 +918,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
                 new Organization { Id = 1, Name = "Aorg" }
             };
             mediator.Setup(x => x.SendAsync(It.IsAny<AllOrganizationsQuery>())).ReturnsAsync(orgs);
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
             var result = (ViewResult) await controller.AssignOrganizationAdmin(user.Id);
 
             Assert.IsType<AssignOrganizationAdminViewModel>(result.Model);
@@ -927,7 +927,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         [Fact]
         public void AssignOrganizationAdminGetHasHttpGetAttribute()
         {
-            var controller = new SiteController(null, null,null);
+            var controller = new SiteAdminController(null, null,null);
             var attribute = controller.GetAttributesOn(x => x.AssignOrganizationAdmin(It.IsAny<string>())).OfType<HttpGetAttribute>().SingleOrDefault();
             Assert.NotNull(attribute);
         }
@@ -941,7 +941,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
                 UserId = "1234"
             };
 
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
             await controller.AssignOrganizationAdmin(model);
 
             mediator.Verify(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == model.UserId)), Times.Once);
@@ -957,7 +957,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             };
             ApplicationUser nullUser = null;
             mediator.Setup(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == model.UserId))).ReturnsAsync(nullUser);
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
             var result = (RedirectToActionResult)await controller.AssignOrganizationAdmin(model);
 
             Assert.Equal("Index", result.ActionName);
@@ -973,7 +973,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             };
             var user = new ApplicationUser { UserName = "name" };
             mediator.Setup(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == model.UserId))).ReturnsAsync(user);
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
             await controller.AssignOrganizationAdmin(model);
 
             Assert.False(controller.ModelState.IsValid);
@@ -992,7 +992,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             };
             var user = new ApplicationUser { UserName = "name" };
             mediator.Setup(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == model.UserId))).ReturnsAsync(user);
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
             await controller.AssignOrganizationAdmin(model);
 
             mediator.Verify(x => x.SendAsync(It.IsAny<AllOrganizationsQuery>()), Times.Once);
@@ -1017,7 +1017,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
 
             var userManager = CreateApplicationUserMock();
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             await controller.AssignOrganizationAdmin(model);
 
             userManager.Verify(x => x.AddClaimAsync(user, It.Is<Claim>(c =>
@@ -1043,7 +1043,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var orgs = new List<Organization> { new Organization { Id = 5678, Name = "Borg" } };
             mediator.Setup(x => x.SendAsync(It.IsAny<AllOrganizationsQuery>())).ReturnsAsync(orgs);
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             var result = (RedirectToActionResult) await controller.AssignOrganizationAdmin(model);
 
             Assert.Equal("Index", result.ActionName);
@@ -1064,7 +1064,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var orgs = new List<Organization> { new Organization { Id = 9123, Name = "Borg" } };
             mediator.Setup(x => x.SendAsync(It.IsAny<AllOrganizationsQuery>())).ReturnsAsync(orgs);
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             await controller.AssignOrganizationAdmin(model);
 
             Assert.False(controller.ModelState.IsValid);
@@ -1084,7 +1084,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var user = new ApplicationUser { UserName = "name" };
             mediator.Setup(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == model.UserId))).ReturnsAsync(user);
 
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
             var result = await controller.AssignOrganizationAdmin(model);
 
             Assert.IsType<ViewResult>(result);
@@ -1094,7 +1094,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public void AssignOrganizationAdminPostHasHttpPostAttribute()
         {
             var mediator = new Mock<IMediator>();
-            var controller = new SiteController(null, null, mediator.Object);
+            var controller = new SiteAdminController(null, null, mediator.Object);
 
             var model = new AssignOrganizationAdminViewModel { UserId = It.IsAny<string>(), OrganizationId = It.IsAny<int>() };
 
@@ -1106,7 +1106,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         [Fact]
         public void AssignOrganizationAdminPostHasValidateAntiForgeryTokenAttribute()
         {
-            var controller = new SiteController(null, null, null);
+            var controller = new SiteAdminController(null, null, null);
             var attribute = controller.GetAttributesOn(x => x.AssignOrganizationAdmin(It.IsAny<AssignOrganizationAdminViewModel>())).OfType<ValidateAntiForgeryTokenAttribute>().SingleOrDefault();
             Assert.NotNull(attribute);
         }
@@ -1115,11 +1115,11 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task RevokeSiteAdminSendsUserByUserIdQueryWithCorrectUserId()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
 
             var userId = It.IsAny<string>();
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).ReturnsAsync(new ApplicationUser());
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
 
             await controller.RevokeSiteAdmin(userId);
             mediator.Verify(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId)), Times.Once);
@@ -1134,7 +1134,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var user = new ApplicationUser { UserName = "name", Id = userId };
             mediator.Setup(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).ReturnsAsync(user);
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             await controller.RevokeSiteAdmin(userId);
 
             userManager.Verify(u => u.RemoveClaimAsync(user, It.Is<Claim>(c => 
@@ -1149,7 +1149,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             var userManager = CreateApplicationUserMock();
             mediator.Setup(m => m.SendAsync(It.IsAny<UserByUserIdQuery>())).ReturnsAsync(new ApplicationUser());
 
-            var controller = new SiteController(userManager.Object, null, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, null, mediator.Object);
             var result = (RedirectToActionResult) await controller.RevokeSiteAdmin(It.IsAny<string>());
 
             Assert.Equal("Index", result.ActionName);
@@ -1159,13 +1159,13 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task RevokeSiteAdminInvokesLogErrorWithCorrectParametersWhenExceptionIsThrown()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             var userId = "1234";
             var thrown = new Exception("Test");
             mediator.Setup(x => x.SendAsync(It.IsAny<UserByUserIdQuery>()))
                 .Throws(thrown);
 
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
             await controller.RevokeSiteAdmin (userId);
 
             string expectedMessage = $"Failed to revoke site admin for {userId}";
@@ -1179,13 +1179,13 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task RevokeSiteAdminAddsCorrectErrorMessageToViewBagWhenExceptionIsThrown()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             var userId = "1234";
             var thrown = new Exception("Test");
             mediator.Setup(x => x.SendAsync(It.IsAny<UserByUserIdQuery>()))
                 .Throws(thrown);
 
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
             await controller.RevokeSiteAdmin(userId);
             string expectedMessage = $"Failed to revoke site admin for {userId}. Exception thrown.";
 
@@ -1196,13 +1196,13 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task RevokeSiteAdminReturnsAViewWhenExceptionIsThrown()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             var userId = "1234";
             var thrown = new Exception("Test");
             mediator.Setup(x => x.SendAsync(It.IsAny<UserByUserIdQuery>()))
                 .Throws(thrown);
 
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
             var result = await controller.RevokeSiteAdmin(userId);
             Assert.IsType<ViewResult>(result);
         }
@@ -1210,7 +1210,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         [Fact]
         public void RevokeSiteAdminHasHttpGetAttribute()
         {
-            var controller = new SiteController(null, null, null);
+            var controller = new SiteAdminController(null, null, null);
             var attribute = controller.GetAttributesOn(x => x.RevokeSiteAdmin(It.IsAny<string>())).OfType<HttpGetAttribute>().SingleOrDefault();
             Assert.NotNull(attribute);
         }
@@ -1219,11 +1219,11 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         public async Task RevokeOrganizationAdminSendsUserByUserIdQueryWithCorrectUserId()
         {
             var mediator = new Mock<IMediator>();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
 
             var userId = It.IsAny<string>();
             mediator.Setup(x => x.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).ReturnsAsync(new ApplicationUser());
-            var controller = new SiteController(null, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(null, logger.Object, mediator.Object);
 
             await controller.RevokeOrganizationAdmin(userId);
             mediator.Verify(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId)), Times.Once);
@@ -1234,12 +1234,12 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         {
             var mediator = new Mock<IMediator>();
             var userManager = CreateApplicationUserMock();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             var userId = "1234";
             var user = new ApplicationUser { UserName = "name", Id = userId };
             mediator.Setup(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).ReturnsAsync(user);
 
-            var controller = new SiteController(userManager.Object, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, logger.Object, mediator.Object);
             await controller.RevokeOrganizationAdmin(userId);
 
             userManager.Verify(u => u.GetClaimsAsync(user), Times.Once);
@@ -1250,7 +1250,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         {
             var mediator = new Mock<IMediator>();
             var userManager = CreateApplicationUserMock();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             var userId = "1234";
             var user = new ApplicationUser { UserName = "name", Id = userId };
             mediator.Setup(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).ReturnsAsync(user);
@@ -1261,7 +1261,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             claims.Add(new Claim(AllReady.Security.ClaimTypes.Organization, orgId));
             userManager.Setup(u => u.GetClaimsAsync(user)).ReturnsAsync(claims);
 
-            var controller = new SiteController(userManager.Object, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, logger.Object, mediator.Object);
             await controller.RevokeOrganizationAdmin(userId);
 
             userManager.Verify(u => u.RemoveClaimAsync(user, It.Is<Claim>(c =>
@@ -1277,7 +1277,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         {
             var mediator = new Mock<IMediator>();
             var userManager = CreateApplicationUserMock();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             var userId = "1234";
             var user = new ApplicationUser { UserName = "name", Id = userId };
             mediator.Setup(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).ReturnsAsync(user);
@@ -1288,7 +1288,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
             claims.Add(new Claim(AllReady.Security.ClaimTypes.Organization, orgId));
             userManager.Setup(u => u.GetClaimsAsync(user)).ReturnsAsync(claims);
 
-            var controller = new SiteController(userManager.Object, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, logger.Object, mediator.Object);
             var result = (RedirectToActionResult) await controller.RevokeOrganizationAdmin(userId);
 
             Assert.Equal("Index", result.ActionName);
@@ -1299,10 +1299,10 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         {
             var mediator = new Mock<IMediator>();
             var userManager = CreateApplicationUserMock();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             var userId = "1234";
             mediator.Setup(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).Throws<Exception>();
-            var controller = new SiteController(userManager.Object, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, logger.Object, mediator.Object);
             await controller.RevokeOrganizationAdmin(userId);
 
             string expectedMessage = $"Failed to revoke organization admin for {userId}";
@@ -1317,10 +1317,10 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         {
             var mediator = new Mock<IMediator>();
             var userManager = CreateApplicationUserMock();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             var userId = "1234";
             mediator.Setup(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).Throws<Exception>();
-            var controller = new SiteController(userManager.Object, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, logger.Object, mediator.Object);
             await controller.RevokeOrganizationAdmin(userId);
 
             string expectedMessage = $"Failed to revoke organization admin for {userId}. Exception thrown.";
@@ -1333,10 +1333,10 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         {
             var mediator = new Mock<IMediator>();
             var userManager = CreateApplicationUserMock();
-            var logger = new Mock<ILogger<SiteController>>();
+            var logger = new Mock<ILogger<SiteAdminController>>();
             var userId = "1234";
             mediator.Setup(m => m.SendAsync(It.Is<UserByUserIdQuery>(q => q.UserId == userId))).Throws<Exception>();
-            var controller = new SiteController(userManager.Object, logger.Object, mediator.Object);
+            var controller = new SiteAdminController(userManager.Object, logger.Object, mediator.Object);
             var result = (ViewResult)await controller.RevokeOrganizationAdmin(userId);
             Assert.IsType<ViewResult>(result);
         }
@@ -1344,7 +1344,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         [Fact]
         public void RevokeOrganizationAdminHasHttpGetAttribute()
         {
-            var controller = new SiteController(null, null,null);
+            var controller = new SiteAdminController(null, null,null);
             var attribute = controller.GetAttributesOn(x => x.RevokeOrganizationAdmin(It.IsAny<string>())).OfType<HttpGetAttribute>().SingleOrDefault();
             Assert.NotNull(attribute);
         }
@@ -1352,7 +1352,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         [Fact]
         public void ControllerHasAreaAtttributeWithTheCorrectAreaName()
         {
-            var controller = new SiteController(null, null, null);
+            var controller = new SiteAdminController(null, null, null);
             var attribute = controller.GetAttributes().OfType<AreaAttribute>().SingleOrDefault();
             Assert.NotNull(attribute);
             Assert.Equal(AreaNames.Admin, attribute.RouteValue);
@@ -1361,7 +1361,7 @@ namespace AllReady.UnitTest.Areas.Admin.Controllers
         [Fact]
         public void ControllerHasAuthorizeAtttributeWithTheCorrectPolicy()
         {
-            var controller = new SiteController(null, null, null);
+            var controller = new SiteAdminController(null, null, null);
             var attribute = controller.GetAttributes().OfType<AuthorizeAttribute>().SingleOrDefault();
             Assert.NotNull(attribute);
             Assert.Equal(nameof(UserType.SiteAdmin), attribute.Policy);

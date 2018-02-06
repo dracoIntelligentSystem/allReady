@@ -29,7 +29,7 @@ using Xunit;
 
 namespace AllReady.UnitTest.Areas.Admin.Controllers
 {
-    public class ItineraryAdminControllerTests
+    public class ItineraryControllerTests
     {
         [Fact]
         public void Controller_HasAreaAtttribute_WithTheCorrectAreaName()

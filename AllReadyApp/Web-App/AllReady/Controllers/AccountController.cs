@@ -437,7 +437,7 @@ namespace AllReady.Controllers
 
             if (user.IsUserType(UserType.SiteAdmin))
             {
-                return new RedirectToActionResult(nameof(SiteController.Index), "Site", new { area = AreaNames.Admin });
+                return new RedirectToActionResult(nameof(SiteAdminController.Index), "Site", new { area = AreaNames.Admin });
             }
 
             if (user.IsUserType(UserType.OrgAdmin))

@@ -110,7 +110,7 @@ namespace AllReady.Controllers
             // this user as a Organization Admin
             if (result.Succeeded)
             {
-                var callbackUrl = Url.Action(new UrlActionContext { Action = nameof(SiteController.EditUser), Controller = "Site", Values = new { area = AreaNames.Admin, userId = user.Id }, Protocol = HttpContext.Request.Scheme });
+                var callbackUrl = Url.Action(new UrlActionContext { Action = nameof(SiteAdminController.EditUser), Controller = "Site", Values = new { area = AreaNames.Admin, userId = user.Id }, Protocol = HttpContext.Request.Scheme });
                 await _mediator.SendAsync(new SendApproveOrganizationUserAccountEmail { DefaultAdminUsername = _settings.Value.DefaultAdminUsername, CallbackUrl = callbackUrl });
             }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -27,13 +27,13 @@ namespace AllReady.Areas.Admin.Controllers
 {
     [Area(AreaNames.Admin)]
     [Authorize(nameof(UserType.SiteAdmin))]
-    public class SiteController : Controller
+    public class SiteAdminController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<SiteController> _logger;
+        private readonly ILogger<SiteAdminController> _logger;
         private readonly IMediator _mediator;
 
-        public SiteController(UserManager<ApplicationUser> userManager, ILogger<SiteController> logger, IMediator mediator)
+        public SiteAdminController(UserManager<ApplicationUser> userManager, ILogger<SiteAdminController> logger, IMediator mediator)
         {
             _userManager = userManager;
             _logger = logger;
